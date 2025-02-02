@@ -12,6 +12,11 @@ export default class Window {
         
     }
 
+    appendToBody(element) {
+        const body = this.element.querySelector('.window-body');
+        body.appendChild(element);
+    }
+
     createElement() {
         const windowElement = document.createElement('div');
         windowElement.classList.add('window')
@@ -26,8 +31,7 @@ export default class Window {
         windowLabel.classList.add('window-label');
         windowLabel.addEventListener('mousedown', (event) => {
             event.preventDefault();
-            windowElement.style.zIndex = performance.now();
-            console.log(windowElement.style.zIndex);
+            windowElement.style.zIndex = parseInt(performance.now() / 100);
             if (event.button === 0) {
                 const offsetX = this.x - event.clientX;
                 const offsetY = this.y - event.clientY;
@@ -69,17 +73,19 @@ export default class Window {
 
     updatePosition(windowElement) {
         this.element.style.width = this.width + 'px';
-        this.element.style.height = this.height + 'px';
-
+        this.element.style.height = this.height + 27 + 'px';
+        
+        const maxX = window.innerWidth - this.width - 10;
+        const maxY = window.innerHeight - this.height - 35;
         if (this.x < 0) {
             this.x = 0;
-        } else if (this.x > window.innerWidth - this.width - 10) {
-            this.x = window.innerWidth - this.width - 10;
+        } else if (this.x > maxX) {
+            this.x = maxX;
         }
         if (this.y < 0) {
             this.y = 0;
-        } else if (this.y > window.innerHeight - this.height - 10) {
-            this.y = window.innerHeight - this.height - 10;
+        } else if (this.y > maxY) {
+            this.y = maxY;
         }
 
         windowElement.style.left = this.x + 'px';

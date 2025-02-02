@@ -1,9 +1,17 @@
 
 .window {
+    display: flex;
+    flex-direction: column;
     background-color: black;
     position: absolute;
     border: 2px solid lime;
     text-align: left;
+}
+
+.window-body {
+    display: block;
+    flex: 1;
+    padding: 8px;
 }
 
 .window-header {
@@ -18,7 +26,7 @@
     align-items: center;
     flex: 1;
     height: 25px;
-    background-color: #007000;
+    background-color: lime;
     padding: 0;
     margin: 0;
     text-align: left;
@@ -35,10 +43,11 @@
 
 .window-label-text {
     padding: 0px;
-    margin-left: 5px
-    
+    margin-left: 8px;
+    color: black;
 }
 
 p {
-    margin: 5px;
+    margin: 0px;
+    padding: 0px;
 }
