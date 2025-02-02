@@ -9,7 +9,8 @@
 }
 
 .window-body {
-    display: block;
+    display: flex;
+    flex-direction: column;
     flex: 1;
     padding: 8px;
 }
@@ -50,4 +51,15 @@
 p {
     margin: 0px;
     padding: 0px;
+}
+
+.daisy-canvas {
+    align-self: center;
+    margin-top: 25px;
+    width: 160px;
+    height: 160px;
+}
+
+.breed-div {
+    margin-top: auto;
 }
