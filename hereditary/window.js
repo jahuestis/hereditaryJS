@@ -1,12 +1,12 @@
 
 export default class Window {
-    constructor(label,x, y, width = 250, height = 250) {
+    constructor(label,x, y, width = 250, height = 250, hasCloser = true) {
         this.label = label;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.element = this.createElement();
+        this.element = this.createElement(hasCloser);
 
         this.updatePosition(this.element);
         
@@ -17,7 +17,7 @@ export default class Window {
         body.appendChild(element);
     }
 
-    createElement() {
+    createElement(hasCloser) {
         const windowElement = document.createElement('div');
         windowElement.classList.add('window')
 
@@ -49,16 +49,19 @@ export default class Window {
         windowLabelText.classList.add('window-label-text');
         windowLabelText.textContent = this.label;
 
-        const windowCloser = document.createElement('button');
-        windowCloser.classList.add('window-closer');
-        windowCloser.textContent = 'X';
-        windowCloser.addEventListener('click', () => {
-            windowElement.remove();
-        });
-
         windowLabel.appendChild(windowLabelText);
         windowHeader.appendChild(windowLabel);
-        windowHeader.appendChild(windowCloser);
+
+        if (hasCloser) {
+            const windowCloser = document.createElement('button');
+            windowCloser.classList.add('window-closer');
+            windowCloser.textContent = 'X';
+            windowCloser.addEventListener('click', () => {
+                windowElement.remove();
+            });
+            windowHeader.appendChild(windowCloser);
+        }
+
         windowElement.appendChild(windowHeader);
         windowElement.appendChild(windowBody);
 
