@@ -1,6 +1,6 @@
 
 export default class Window {
-    constructor(label, x, y, width = 250, height = 250) {
+    constructor(label,x, y, width = 250, height = 250) {
         this.label = label;
         this.x = x;
         this.y = y;
@@ -58,14 +58,8 @@ export default class Window {
         windowElement.appendChild(windowHeader);
         windowElement.appendChild(windowBody);
 
-
-        
-
         return windowElement
     }
-
-
-
 
     onDrag(event, windowElement, offsetX, offsetY) {
         this.x = event.clientX + offsetX
@@ -90,5 +84,16 @@ export default class Window {
 
         windowElement.style.left = this.x + 'px';
         windowElement.style.top = this.y + 'px';
+    }
+
+    rename(label) {
+        this.label = label;
+        this.element.querySelector('.window-label-text').textContent = this.label;
+    }
+
+    resize(width, height) {
+        this.width = width;
+        this.height = height;
+        this.updatePosition(this.element);
     }
 }
