@@ -2,14 +2,15 @@
 .window {
     background-color: black;
     position: absolute;
-    border: 2px solid green;
+    border: 2px solid lime;
+    text-align: left;
 }
 
 .window-header {
     display: flex;
     width: 100%;
     height: 25px;
-    border-bottom: 2px solid green;
+    border-bottom: 2px solid lime;
 }
 
 .window-label {
@@ -17,7 +18,7 @@
     align-items: center;
     flex: 1;
     height: 25px;
-    background-color: gray;
+    background-color: #007000;
     padding: 0;
     margin: 0;
     text-align: left;
@@ -36,4 +37,8 @@
     padding: 0px;
     margin-left: 5px
     
+}
+
+p {
+    margin: 5px;
 }
