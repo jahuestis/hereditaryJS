@@ -63,3 +63,15 @@ p {
 .breed-div {
     margin-top: auto;
 }
+
+button, select {
+    background-color: black;
+    color: lime;
+    border: 2px solid lime;
+    font-size: 1.2em;
+    margin-right: 5px;
+}
+
+button:active {
+    transform: scale(0.95);
+}

@@ -7,8 +7,10 @@ export default class Window {
         this.width = width;
         this.height = height;
         this.element = this.createElement(hasCloser);
+        this.closed = false;
 
         this.updatePosition(this.element);
+        this.element.style.zIndex = parseInt(performance.now() / 100);
         
     }
 
@@ -56,9 +58,7 @@ export default class Window {
             const windowCloser = document.createElement('button');
             windowCloser.classList.add('window-closer');
             windowCloser.textContent = 'X';
-            windowCloser.addEventListener('click', () => {
-                windowElement.remove();
-            });
+            windowCloser.addEventListener('click', () => this.close());
             windowHeader.appendChild(windowCloser);
         }
 
@@ -104,5 +104,10 @@ export default class Window {
         this.width = width;
         this.height = height;
         this.updatePosition(this.element);
+    }
+
+    close() {
+        this.element.remove();
+        this.closed = true;
     }
 }

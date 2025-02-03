@@ -3,17 +3,6 @@ import Window from './window.js';
 import Daisy from './daisy.js';
 
 
-function createDropdown(_class, options) {
-    const dropdown = document.createElement("select");
-    dropdown.classList.add(_class);
-    for (let i = 0; i < options.length; i++) {
-        const option = document.createElement("option");
-        option.textContent = options[i];
-        dropdown.appendChild(option);
-    }
-    return dropdown;
-}
-
 function readableDNA(dnaDecoded) {
     let dnaString = "";
     dnaString += dnaDecoded.slice(0, 4)
@@ -49,8 +38,8 @@ function drawFlower(canvas, petalCount, petalRadius, centerRadius) {
     ctx.fillStyle = 'white';
     for (let i = 0; i < petalCount; i++) {
         let angle = (i * 2 * Math.PI) / petalCount; // Evenly space petals
-        let petalX = x + Math.cos(angle) * (centerRadius + petalRadius / 4);  // X position of petal
-        let petalY = y + Math.sin(angle) * (centerRadius + petalRadius / 4);  // Y position of petal
+        let petalX = x + Math.cos(angle) * (centerRadius);  // X position of petal
+        let petalY = y + Math.sin(angle) * (centerRadius);  // Y position of petal
         ctx.beginPath();
         ctx.arc(petalX, petalY, petalRadius, 0, 2 * Math.PI);
         ctx.fill();
@@ -64,7 +53,7 @@ function drawFlower(canvas, petalCount, petalRadius, centerRadius) {
 }
 
 class DaisyWindow extends Window {
-    constructor(daisy, x, y, width, height, hasCloser = false) {
+    constructor(daisy, x, y, width, height, hasCloser = true) {
         super(daisy.name, x, y, width, height, hasCloser);
         this.daisy = daisy;
         this.initializeWindowBody();
@@ -75,7 +64,7 @@ class DaisyWindow extends Window {
         if (this.daisy.parent1 === null) { 
             parentsP.textContent = "Parents: n/a";
         } else {
-            parentsP.textContent = "Parents: " + daisy.parent1.name + ", " + daisy.parent2.name;
+            parentsP.textContent = "Parents: " + this.daisy.parent1.name + ", " + this.daisy.parent2.name;
         }
         this.appendToBody(parentsP);
 
@@ -101,22 +90,48 @@ class DaisyWindow extends Window {
         const breedButton = document.createElement("button");
         breedButton.classList.add("breed-button");
         breedButton.textContent = "Breed";
+        breedButton.addEventListener("click", () => {
+            let parent2Name = this.element.querySelector(".breed-dropdown").value;
+            let daisyWindow2 = daisyWindows.find(daisyWindow => daisyWindow.daisy.name === parent2Name)
+            if (daisyWindow2 === undefined) {
+                console.log("Parent 2 not found");
+                return;
+            }
+            const parent1 = this.daisy;
+            const parent2 = daisyWindow2.daisy;
+            const childDaisy = parent1.breed(parent2, "daisy " + daisyCounter++);
+            const childDaisyWindow = new DaisyWindow(childDaisy, (this.x + daisyWindow2.x / 2 - windowWidth + (Math.random() * 200 - 100)), (this.y + daisyWindow2.y / 2) + 100 + Math.random() * 100, windowWidth, windowHeight);
+            daisyWindows.push(childDaisyWindow);
+            document.body.appendChild(childDaisyWindow.element);
+            updateDasies();
+        });
 
-        const breedDropdown = createDropdown("breed-dropdown", daisys.map(daisy => daisy.daisy.name));
+        const breedDropdown = document.createElement("select");
+        breedDropdown.classList.add("breed-dropdown");
 
         breedDiv.appendChild(breedButton);
         breedDiv.appendChild(breedDropdown);
         this.appendToBody(breedDiv);
+        this.updateBreedOptions(true);
     }
 
-    updateBreedOptions() {
+    updateBreedOptions(selectRandom = false) {
         const breedDropdown = this.element.querySelector(".breed-dropdown");
-        const options = daisys.map(daisy => daisy.daisy.name);
+        const previousSelectedOption = breedDropdown.value;
+        const options = daisyWindows.map(daisyWindow => daisyWindow.daisy.name);
         breedDropdown.innerHTML = "";
         for (let i = 0; i < options.length; i++) {
             const option = document.createElement("option");
-            option.textContent = options[i];
-            breedDropdown.appendChild(option);
+            if (options[i] != this.daisy.name) {
+                option.textContent = options[i];
+                breedDropdown.appendChild(option);
+            }
+        }
+        if (selectRandom) {
+            console.log("Selecting random");
+            breedDropdown.value = options[Math.floor(Math.random() * options.length)];
+        } else if (options.includes(previousSelectedOption)) {
+            breedDropdown.value = previousSelectedOption;
         }
     }
 }
@@ -127,15 +142,44 @@ const windowHeight = 300;
 
 let daisyCounter = 0;
 
-let daisys = [];
-
+let daisyWindows = [];
+// Create two initial daisy windows
 for (let i = 0; i < 2; i++) {
     const daisyWindow = new DaisyWindow(new Daisy("Daisy " + daisyCounter++), window.innerWidth / 2 - 350 + i * 400, 150, windowWidth, windowHeight);
-    daisys.push(daisyWindow);
+    daisyWindows.push(daisyWindow);
     document.body.appendChild(daisyWindow.element);
 }
+updateDasies();
 
-daisys.forEach(daisy => daisy.updateBreedOptions());
+function updateDasies() {
+    daisyWindows.forEach(daisy => daisy.updateBreedOptions());
+}
+
+// Remove closed windows
+setInterval(() => removeClosedWindows(daisyWindows), 100);
+function removeClosedWindows(windows) {
+    const oldLength = windows.length;
+    for (let i = 0; i < windows.length; i++) {
+        if (windows[i].closed) {
+            windows.splice(i, 1);
+        }
+    }
+    if (oldLength !== windows.length) {
+        updateDasies();
+    }
+};
+
+document.getElementById("spawn-daisy").addEventListener("click", () => {
+    const daisyWindow = new DaisyWindow(new Daisy("Daisy " + daisyCounter++), Math.random() * window.innerWidth, Math.random() * window.innerHeight, windowWidth, windowHeight);
+    daisyWindows.push(daisyWindow);
+    document.body.appendChild(daisyWindow.element);
+    updateDasies();
+});
 
 
 
+document.getElementById("clear-daisies").addEventListener("click", () => {
+    for (let i = 0; i < daisyWindows.length; i++) {
+        daisyWindows[i].close();
+    }
+});
