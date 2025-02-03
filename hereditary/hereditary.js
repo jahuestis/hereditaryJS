@@ -128,7 +128,6 @@ class DaisyWindow extends Window {
             }
         }
         if (selectRandom) {
-            console.log("Selecting random");
             breedDropdown.value = options[Math.floor(Math.random() * options.length)];
         } else if (options.includes(previousSelectedOption)) {
             breedDropdown.value = previousSelectedOption;
